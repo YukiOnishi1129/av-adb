@@ -14,7 +14,6 @@ import {
   type Work,
   type DailyRecommendedWork,
 } from "@/lib/data-loader";
-import { ShowMoreGrid } from "@/components/show-more-grid";
 import { FanzaLink } from "@/components/fanza-link";
 import {
   Star,
@@ -278,7 +277,7 @@ export default async function RecommendationsPage() {
               TOP {recommendedWorks.length}
             </Badge>
           </div>
-          <ShowMoreGrid columns={2}>
+          <div className="grid gap-4">
             {recommendedWorks.map(({ work, rec }, index) => (
               <RecommendationCard
                 key={work.id}
@@ -288,7 +287,7 @@ export default async function RecommendationsPage() {
                 rank={index + 1}
               />
             ))}
-          </ShowMoreGrid>
+          </div>
         </section>
 
         {/* 他のコンテンツへの誘導 */}
