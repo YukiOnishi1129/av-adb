@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { WorkCard } from "@/components/work-card";
-import { ShowMoreGrid } from "@/components/show-more-grid";
 import { getWorks } from "@/lib/data-loader";
 
 export default async function RankingPage() {
@@ -53,7 +52,7 @@ export default async function RankingPage() {
 
         {/* ランキング一覧 */}
         {rankedWorks.length > 0 ? (
-          <ShowMoreGrid columns={3}>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {rankedWorks.map((work, index) => {
               const rank = index + 1;
               return (
@@ -67,7 +66,7 @@ export default async function RankingPage() {
                 </div>
               );
             })}
-          </ShowMoreGrid>
+          </div>
         ) : (
           <p className="text-muted-foreground">作品がありません。</p>
         )}

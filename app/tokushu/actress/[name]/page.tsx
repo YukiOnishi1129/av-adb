@@ -17,9 +17,6 @@ import {
   type Work,
 } from "@/lib/data-loader";
 
-export const dynamic = "force-static";
-export const dynamicParams = false;
-
 interface Props {
   params: Promise<{ name: string }>;
 }

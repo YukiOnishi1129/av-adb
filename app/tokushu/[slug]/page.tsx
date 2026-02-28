@@ -31,7 +31,6 @@ import {
 } from "lucide-react";
 
 export const dynamic = "force-static";
-export const dynamicParams = false;
 
 // 静的パラメータを生成
 export async function generateStaticParams() {

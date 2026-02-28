@@ -112,12 +112,15 @@ function parseJsonArray(data: unknown): string[] {
   if (typeof data === "string") {
     try {
       const parsed = JSON.parse(data);
-      return Array.isArray(parsed) ? parsed : [];
+      return Array.isArray(parsed) ? parsed.flat() : [];
     } catch {
       return [];
     }
   }
-  return Array.isArray(data) ? data : [];
+  if (Array.isArray(data)) {
+    return data.flat();
+  }
+  return [];
 }
 
 /**
