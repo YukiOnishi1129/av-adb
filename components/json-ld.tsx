@@ -1,0 +1,131 @@
+import { Work } from "@/lib/data-loader";
+
+interface WebsiteJsonLdProps {
+  url: string;
+  name: string;
+  description: string;
+}
+
+export function WebsiteJsonLd({ url, name, description }: WebsiteJsonLdProps) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name,
+    description,
+    url,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+interface ProductJsonLdProps {
+  work: Work;
+}
+
+export function ProductJsonLd({ work }: ProductJsonLdProps) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: work.title,
+    description: work.aiSummary || work.description || work.title,
+    image: work.thumbnailUrl,
+    url: `https://av-adb.com/works/${work.id}/`,
+    brand: {
+      "@type": "Brand",
+      name: work.maker,
+    },
+    offers: {
+      "@type": "Offer",
+      price: work.price,
+      priceCurrency: "JPY",
+      availability: "https://schema.org/InStock",
+      url: work.fanzaUrl,
+    },
+    ...(work.rating && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: work.rating,
+        reviewCount: work.reviewCount || 1,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+interface BreadcrumbJsonLdProps {
+  items: { name: string; url: string }[];
+}
+
+export function BreadcrumbJsonLd({ items }: BreadcrumbJsonLdProps) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+interface ArticleJsonLdProps {
+  title: string;
+  description: string;
+  url: string;
+  image?: string;
+  datePublished?: string;
+  dateModified?: string;
+}
+
+export function ArticleJsonLd({
+  title,
+  description,
+  url,
+  image,
+  datePublished,
+  dateModified,
+}: ArticleJsonLdProps) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    description,
+    url,
+    ...(image && { image }),
+    ...(datePublished && { datePublished }),
+    ...(dateModified && { dateModified }),
+    publisher: {
+      "@type": "Organization",
+      name: "AV-ADB",
+      url: "https://av-adb.com",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
