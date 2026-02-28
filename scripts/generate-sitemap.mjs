@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CACHE_DIR = join(__dirname, "../.cache/data");
 const PUBLIC_DIR = join(__dirname, "../public");
-const BASE_URL = "https://av-adv.com";
+const BASE_URL = "https://av-adb.com";
 
 function loadJson(filename) {
   const path = join(CACHE_DIR, filename);

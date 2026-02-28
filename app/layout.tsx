@@ -55,7 +55,7 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} antialiased`}>
         <WebsiteJsonLd
-          url="https://av-adv.com"
+          url="https://av-adb.com"
           name="AV-ADB"
           description="FANZAの人気作品をレビュー。AV動画 おすすめランキング、セール情報、女優別作品まとめ。"
         />
