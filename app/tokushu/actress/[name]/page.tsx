@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { WorkCard } from "@/components/work-card";
+import { FanzaLink } from "@/components/fanza-link";
 import {
   getActressFeatures,
   getActressFeatureByName,
@@ -161,16 +162,16 @@ function RecommendationCard({
 
         <div className="flex gap-2">
           {work.fanzaUrl && (
-            <a
-              href={work.fanzaUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <FanzaLink
+              url={work.fanzaUrl}
+              contentId={work.id}
+              source="tokushu_actress"
               className="flex-1 inline-flex items-center justify-center gap-1 rounded border border-border px-3 py-2 text-xs font-bold hover:bg-muted whitespace-nowrap"
             >
               <Play className="h-3 w-3" />
               試聴してみる
               <ExternalLink className="h-3 w-3" />
-            </a>
+            </FanzaLink>
           )}
           <Link href={`/works/${work.id}`} className="flex-1">
             <Button size="sm" className="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold">

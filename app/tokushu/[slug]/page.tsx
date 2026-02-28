@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { FanzaLink } from "@/components/fanza-link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -215,12 +216,12 @@ function RecommendationCard({
             </Button>
           </Link>
           {work.fanzaUrl && (
-            <a href={work.fanzaUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+            <FanzaLink url={work.fanzaUrl} contentId={work.id} source="tokushu" className="flex-1">
               <Button variant="outline" size="sm" className="w-full text-xs">
                 FANZA
                 <ExternalLink className="h-3 w-3 ml-1" />
               </Button>
-            </a>
+            </FanzaLink>
           )}
         </div>
       </div>

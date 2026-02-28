@@ -15,6 +15,7 @@ import {
   type DailyRecommendedWork,
 } from "@/lib/data-loader";
 import { ShowMoreGrid } from "@/components/show-more-grid";
+import { FanzaLink } from "@/components/fanza-link";
 import {
   Star,
   Clock,
@@ -189,12 +190,12 @@ function RecommendationCard({
             </Button>
           </Link>
           {work.fanzaUrl && (
-            <a href={work.fanzaUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+            <FanzaLink url={work.fanzaUrl} contentId={work.id} source="recommendations" className="flex-1">
               <Button variant="outline" size="sm" className="w-full text-xs">
                 FANZA
                 <ExternalLink className="h-3 w-3 ml-1" />
               </Button>
-            </a>
+            </FanzaLink>
           )}
         </div>
       </div>

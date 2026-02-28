@@ -6,6 +6,7 @@ import { WorkCard } from "@/components/work-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { FanzaLink } from "@/components/fanza-link";
 import {
   getLatestSaleFeature,
   getWorkByNumericId,
@@ -215,12 +216,12 @@ function MainFocusCard({
             </Button>
           </Link>
           {work.fanzaUrl && (
-            <a href={work.fanzaUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
+            <FanzaLink url={work.fanzaUrl} contentId={work.id} source="sale_tokushu" className="flex-1">
               <Button variant="outline" className="w-full py-6 whitespace-nowrap">
                 サンプルを見る
                 <ExternalLink className="h-4 w-4 ml-2 shrink-0" />
               </Button>
-            </a>
+            </FanzaLink>
           )}
         </div>
       </div>
