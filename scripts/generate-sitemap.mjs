@@ -66,6 +66,16 @@ function generateSitemap() {
   // 特集データ
   const featureRecommendations = loadJson("feature_recommendations.json");
 
+  // 女優一覧（作品から抽出）
+  const actressSet = new Set();
+  for (const work of works) {
+    const actresses = work.actresses || [];
+    for (const actress of actresses) {
+      if (actress) actressSet.add(actress);
+    }
+  }
+  const allActresses = Array.from(actressSet);
+
   // ジャンル一覧（作品から抽出）
   const genreSet = new Set();
   for (const work of works) {
@@ -116,9 +126,9 @@ function generateSitemap() {
 `;
   }
 
-  // 女優一覧ページ
-  for (const actress of actressFeatures) {
-    const encodedName = encodeURIComponent(actress.name);
+  // 女優一覧ページ（worksから抽出した全女優）
+  for (const actressName of allActresses) {
+    const encodedName = encodeURIComponent(actressName);
     xml += `  <url>
     <loc>${BASE_URL}/actresses/${encodedName}/</loc>
     <lastmod>${today}</lastmod>
@@ -162,7 +172,8 @@ function generateSitemap() {
   const totalUrls =
     staticPages.length +
     works.length +
-    actressFeatures.length * 2 +
+    actressFeatures.length +
+    allActresses.length +
     genres.length +
     featureRecommendations.length;
 

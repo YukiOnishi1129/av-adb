@@ -3,4 +3,4 @@ Allow: /
 Disallow: /api/
 Disallow: /private/
 
-Sitemap: https://vr-adb.com/sitemap.xml
+Sitemap: https://av-adb.com/sitemap.xml
