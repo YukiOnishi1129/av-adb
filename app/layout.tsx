@@ -5,7 +5,7 @@ import { MobileNav } from "@/components/mobile-nav";
 import { WebsiteJsonLd } from "@/components/json-ld";
 import "./globals.css";
 
-const GA_MEASUREMENT_ID = ""; // TODO: AV-ADB用のGA IDを設定
+const GA_MEASUREMENT_ID = "G-Y87M80KS29";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

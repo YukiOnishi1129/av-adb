@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { WorkCard } from "@/components/work-card";
+import { ShowMoreGrid } from "@/components/show-more-grid";
 import { getGenres, getWorksByGenre } from "@/lib/data-loader";
 
 interface Props {
@@ -83,11 +84,11 @@ export default async function GenreDetailPage({ params }: Props) {
 
         {/* 作品一覧 */}
         {works.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ShowMoreGrid columns={3}>
             {works.map((work) => (
               <WorkCard key={work.id} work={work} />
             ))}
-          </div>
+          </ShowMoreGrid>
         ) : (
           <p className="text-muted-foreground">
             このジャンルの作品はまだ登録されていません。

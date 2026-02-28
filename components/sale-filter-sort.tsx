@@ -40,12 +40,15 @@ const priceFilters: { value: PriceFilter; label: string }[] = [
   { value: "3000", label: "〜3,000円" },
 ];
 
+const ITEMS_PER_PAGE = 30;
+
 export function SaleFilterSort({ items }: SaleFilterSortProps) {
   const [sort, setSort] = useState<SortOption>("discount");
   const [actressCount, setActressCount] = useState<ActressCountFilter>("all");
   const [maxPrice, setMaxPrice] = useState<PriceFilter>("all");
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
   const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
   const currentSortLabel =
     sortOptions.find((opt) => opt.value === sort)?.label || "割引率順";
@@ -100,7 +103,7 @@ export function SaleFilterSort({ items }: SaleFilterSortProps) {
             <button
               type="button"
               key={option.value}
-              onClick={() => setActressCount(option.value)}
+              onClick={() => { setActressCount(option.value); setVisibleCount(ITEMS_PER_PAGE); }}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 actressCount === option.value
                   ? "bg-primary text-primary-foreground"
@@ -155,11 +158,25 @@ export function SaleFilterSort({ items }: SaleFilterSortProps) {
 
       {/* 作品一覧 - 2カラム */}
       {filteredAndSortedItems.length > 0 ? (
-        <div className="grid grid-cols-2 gap-3">
-          {filteredAndSortedItems.map((item) => (
-            <SearchResultCard key={item.id} item={item} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 gap-3">
+            {filteredAndSortedItems.slice(0, visibleCount).map((item) => (
+              <SearchResultCard key={item.id} item={item} />
+            ))}
+          </div>
+          {visibleCount < filteredAndSortedItems.length && (
+            <div className="mt-6 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + ITEMS_PER_PAGE)}
+                className="flex items-center gap-2 rounded-full bg-secondary px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary/80"
+              >
+                <span>もっと見る（残り{filteredAndSortedItems.length - visibleCount}件）</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <p className="py-8 text-center text-muted-foreground">
           該当する作品がありません
@@ -241,6 +258,7 @@ export function SaleFilterSort({ items }: SaleFilterSortProps) {
                   type="button"
                   onClick={() => {
                     setMaxPrice(opt.value);
+                    setVisibleCount(ITEMS_PER_PAGE);
                     setIsPriceModalOpen(false);
                   }}
                   className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-left transition-colors ${

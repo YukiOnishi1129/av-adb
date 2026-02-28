@@ -14,6 +14,7 @@ import {
   type Work,
   type DailyRecommendedWork,
 } from "@/lib/data-loader";
+import { ShowMoreGrid } from "@/components/show-more-grid";
 import {
   Star,
   Clock,
@@ -276,7 +277,7 @@ export default async function RecommendationsPage() {
               TOP {recommendedWorks.length}
             </Badge>
           </div>
-          <div className="grid gap-4">
+          <ShowMoreGrid columns={2}>
             {recommendedWorks.map(({ work, rec }, index) => (
               <RecommendationCard
                 key={work.id}
@@ -286,7 +287,7 @@ export default async function RecommendationsPage() {
                 rank={index + 1}
               />
             ))}
-          </div>
+          </ShowMoreGrid>
         </section>
 
         {/* 他のコンテンツへの誘導 */}

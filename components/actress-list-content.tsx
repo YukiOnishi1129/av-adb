@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Crown, Trophy, Medal, User } from "lucide-react";
+import { Search, Crown, Trophy, Medal, User, ChevronDown } from "lucide-react";
 
 interface ActressInfo {
   name: string;
@@ -26,8 +26,11 @@ interface ActressListContentProps {
   rankedActresses: RankedActress[];
 }
 
+const ITEMS_PER_PAGE = 30;
+
 export function ActressListContent({ actresses, rankedActresses }: ActressListContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
   // actressesから名前→サムネイルのマップを作成
   const actressThumbnailMap = useMemo(() => {
@@ -106,7 +109,7 @@ export function ActressListContent({ actresses, rankedActresses }: ActressListCo
             placeholder="女優名で検索..."
             className="h-11 pl-10 text-base"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => { setSearchQuery(e.target.value); setVisibleCount(ITEMS_PER_PAGE); }}
           />
         </div>
         {searchQuery && (
@@ -210,7 +213,7 @@ export function ActressListContent({ actresses, rankedActresses }: ActressListCo
             </span>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
-            {filteredOther.map((actress) => (
+            {filteredOther.slice(0, visibleCount).map((actress) => (
               <Link
                 key={actress.name}
                 href={`/actresses/${encodeURIComponent(actress.name)}`}
@@ -228,6 +231,18 @@ export function ActressListContent({ actresses, rankedActresses }: ActressListCo
               </Link>
             ))}
           </div>
+          {visibleCount < filteredOther.length && (
+            <div className="mt-4 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + ITEMS_PER_PAGE)}
+                className="flex items-center gap-2 rounded-full bg-secondary px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary/80"
+              >
+                <span>もっと見る（残り{filteredOther.length - visibleCount}名）</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </section>
       )}
 
