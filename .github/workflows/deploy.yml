@@ -1,0 +1,204 @@
+name: Deploy to Shin Rental Server
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+  schedule:
+    # 毎日14:00 JST (05:00 UTC) - dailyバッチ完了後
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Record start time
+        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        id: install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        id: build
+        env:
+          R2_PUBLIC_DOMAIN: ${{ secrets.R2_PUBLIC_DOMAIN }}
+        run: pnpm build
+
+      - name: Collect build stats
+        id: stats
+        run: |
+          PAGE_COUNT=$(find out -name "*.html" | wc -l | tr -d ' ')
+          echo "PAGE_COUNT=$PAGE_COUNT" >> $GITHUB_ENV
+
+          OUT_SIZE=$(du -sh out | cut -f1)
+          echo "OUT_SIZE=$OUT_SIZE" >> $GITHUB_ENV
+
+          WORKS_COUNT=$(find out/works -name "*.html" 2>/dev/null | wc -l | tr -d ' ')
+          echo "WORKS_COUNT=$WORKS_COUNT" >> $GITHUB_ENV
+
+          ACTRESSES_COUNT=$(find out/actresses -name "*.html" 2>/dev/null | wc -l | tr -d ' ')
+          echo "ACTRESSES_COUNT=$ACTRESSES_COUNT" >> $GITHUB_ENV
+
+      - name: Fix file permissions
+        run: |
+          find out -type f -exec chmod 644 {} \;
+          find out -type d -exec chmod 755 {} \;
+
+      - name: Setup SSH
+        id: ssh
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${SSH_PORT} ${SSH_HOST} >> ~/.ssh/known_hosts
+
+      - name: Deploy via rsync
+        id: deploy
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+        run: |
+          rsync -avz --delete \
+            --exclude 'api/' \
+            -e "ssh -p ${SSH_PORT}" \
+            ./out/ \
+            ${SSH_USERNAME}@${SSH_HOST}:~/av-adv.com/public_html/
+
+      - name: Calculate duration
+        if: ${{ always() }}
+        run: |
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          MINUTES=$((DURATION / 60))
+          SECONDS=$((DURATION % 60))
+          echo "DURATION_TEXT=${MINUTES}分${SECONDS}秒" >> $GITHUB_ENV
+
+      - name: Notify Discord on success
+        if: ${{ success() }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d @- << EOF
+          {
+            "embeds": [{
+              "title": "✅ AV-ADB デプロイ完了",
+              "color": 5763719,
+              "fields": [
+                {
+                  "name": "📄 総ページ数",
+                  "value": "${PAGE_COUNT} ページ",
+                  "inline": true
+                },
+                {
+                  "name": "🎬 作品ページ",
+                  "value": "${WORKS_COUNT} ページ",
+                  "inline": true
+                },
+                {
+                  "name": "👩 女優ページ",
+                  "value": "${ACTRESSES_COUNT} ページ",
+                  "inline": true
+                },
+                {
+                  "name": "📦 ビルドサイズ",
+                  "value": "${OUT_SIZE}",
+                  "inline": true
+                },
+                {
+                  "name": "⏱️ 所要時間",
+                  "value": "${DURATION_TEXT}",
+                  "inline": true
+                },
+                {
+                  "name": "🔗 サイト",
+                  "value": "[av-adv.com](https://av-adv.com)",
+                  "inline": true
+                }
+              ],
+              "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            }]
+          }
+          EOF
+
+      - name: Notify Discord on failure
+        if: ${{ failure() }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          FAILED_STEP="不明"
+          if [ "${{ steps.install.outcome }}" = "failure" ]; then
+            FAILED_STEP="依存関係インストール"
+          elif [ "${{ steps.build.outcome }}" = "failure" ]; then
+            FAILED_STEP="ビルド"
+          elif [ "${{ steps.ssh.outcome }}" = "failure" ]; then
+            FAILED_STEP="SSH接続"
+          elif [ "${{ steps.deploy.outcome }}" = "failure" ]; then
+            FAILED_STEP="デプロイ (rsync)"
+          fi
+
+          curl -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d @- << EOF
+          {
+            "embeds": [{
+              "title": "❌ AV-ADB デプロイ失敗",
+              "color": 15548997,
+              "fields": [
+                {
+                  "name": "💥 失敗箇所",
+                  "value": "${FAILED_STEP}",
+                  "inline": true
+                },
+                {
+                  "name": "⏱️ 経過時間",
+                  "value": "${DURATION_TEXT:-不明}",
+                  "inline": true
+                },
+                {
+                  "name": "🔗 GitHub Actions",
+                  "value": "[ログを確認](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+                }
+              ],
+              "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            }]
+          }
+          EOF
