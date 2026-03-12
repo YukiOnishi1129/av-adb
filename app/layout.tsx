@@ -28,6 +28,21 @@ export const metadata: Metadata = {
     description:
       "FANZAの人気作品をレビュー。おすすめランキング、セール情報を毎日更新。",
     type: "website",
+    images: [
+      {
+        url: "https://av-adb.com/ogp/top_ogp.png",
+        width: 1200,
+        height: 630,
+        alt: "AV-ADB | アダルトAV動画レビュー",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AV-ADB | アダルトAV動画レビュー",
+    description:
+      "FANZAの人気作品をレビュー。おすすめランキング、セール情報を毎日更新。",
+    images: ["https://av-adb.com/ogp/top_ogp.png"],
   },
 };
 

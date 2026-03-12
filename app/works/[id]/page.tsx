@@ -13,6 +13,7 @@ import { FanzaLink } from "@/components/fanza-link";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { BreadcrumbJsonLd, ProductJsonLd } from "@/components/json-ld";
+import { SisterSiteBanner } from "@/components/sister-site-banner";
 import { WorkCard } from "@/components/work-card";
 import {
   getWorks,
@@ -556,6 +557,9 @@ export default async function WorkDetailPage({
             </section>
           )}
         </div>
+
+        {/* 姉妹サイトバナー */}
+        <SisterSiteBanner />
       </main>
 
       <Footer />
