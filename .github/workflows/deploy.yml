@@ -8,8 +8,8 @@ on:
       - 'docs/**'
       - '**/*.md'
   schedule:
-    # 毎日18:00 JST (09:00 UTC) - dailyバッチ完了後、他ジョブと被らない時間
-    - cron: '0 9 * * *'
+    # 毎日05:00 JST (20:00 UTC) - 深夜の空き時間帯
+    - cron: '0 20 * * *'
   workflow_dispatch:
 
 jobs:
