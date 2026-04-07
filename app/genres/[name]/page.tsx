@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const title = `「${name}」ジャンルのAV作品一覧（${works.length}作品） | AV-ADB`;
-  const description = `「${name}」ジャンルのアダルトAV動画${works.length}作品を掲載。人気作品やセール情報もチェック！`;
+  const title = `「${name}」ジャンルのAV作品一覧 レビュー・感想（${works.length}作品） | AV-ADB`;
+  const description = `「${name}」ジャンルのアダルトAV動画${works.length}作品のレビュー・感想を掲載。人気作品やセール情報もチェック！`;
 
   return {
     title,

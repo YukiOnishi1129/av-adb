@@ -65,6 +65,53 @@ export function ProductJsonLd({ work }: ProductJsonLdProps) {
   );
 }
 
+export function ReviewJsonLd({ work }: ProductJsonLdProps) {
+  const rating = work.rating;
+  const reviewCount = work.reviewCount;
+  const reviewBody = work.aiReview || work.aiAppealPoints || work.aiSummary;
+  if (!reviewBody) return null;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    itemReviewed: {
+      "@type": "Product",
+      name: work.title,
+      image: work.thumbnailUrl,
+      url: `https://av-adb.com/works/${work.id}/`,
+    },
+    author: {
+      "@type": "Organization",
+      name: "AV-ADB編集部",
+    },
+    reviewBody,
+    ...(rating > 0 && {
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }),
+    ...(rating > 0 && reviewCount > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: rating,
+        reviewCount: reviewCount,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
 interface BreadcrumbJsonLdProps {
   items: { name: string; url: string }[];
 }

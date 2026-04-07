@@ -12,7 +12,7 @@ import { notFound } from "next/navigation";
 import { FanzaLink } from "@/components/fanza-link";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { BreadcrumbJsonLd, ProductJsonLd } from "@/components/json-ld";
+import { BreadcrumbJsonLd, ProductJsonLd, ReviewJsonLd } from "@/components/json-ld";
 import { SisterSiteBanner } from "@/components/sister-site-banner";
 import { WorkCard } from "@/components/work-card";
 import {
@@ -37,13 +37,19 @@ export async function generateMetadata({
     };
   }
 
-  const description =
-    work.aiSummary ||
-    work.aiRecommendReason ||
-    `${work.title}のレビュー・詳細情報。${work.actresses.join("、")}出演。`;
+  const ratingText = work.rating > 0 ? `★${work.rating.toFixed(1)}` : "";
+  const saleText = work.listPrice > 0 && work.price < work.listPrice
+    ? `${Math.round((1 - work.price / work.listPrice) * 100)}%OFFセール中！`
+    : work.price > 0 ? `¥${work.price.toLocaleString()}〜` : "";
+  const metaPrefix = [ratingText, saleText].filter(Boolean).join(" ");
+  const description = metaPrefix
+    ? `${metaPrefix} ${work.aiSummary || work.aiRecommendReason || `${work.title}のレビュー・詳細情報。${work.actresses.join("、")}出演。`}`
+    : work.aiSummary || work.aiRecommendReason || `${work.title}のレビュー・詳細情報。${work.actresses.join("、")}出演。`;
+
+  const pageTitle = `${work.title} レビュー・感想 | AV-ADB`;
 
   return {
-    title: `${work.title} | AV-ADB`,
+    title: pageTitle,
     description,
     openGraph: {
       title: work.title,
@@ -120,6 +126,7 @@ export default async function WorkDetailPage({
   return (
     <div className="min-h-screen bg-background">
       <ProductJsonLd work={work} />
+      <ReviewJsonLd work={work} />
       <BreadcrumbJsonLd
         items={[
           { name: "トップ", url: "https://av-adb.com/" },

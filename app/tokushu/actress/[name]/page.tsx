@@ -43,8 +43,8 @@ export async function generateMetadata({ params }: Props) {
   }
 
   return {
-    title: `${feature.name}のAV特集 | AV-ADB`,
-    description: feature.description,
+    title: `${feature.name}のAV特集 レビュー・感想 | AV-ADB`,
+    description: `${feature.name}のAV作品レビュー・感想。${feature.description}`,
   };
 }
 
