@@ -39,13 +39,15 @@ export function ProductJsonLd({ work }: ProductJsonLdProps) {
       "@type": "Brand",
       name: work.maker,
     },
-    offers: {
-      "@type": "Offer",
-      price: work.price,
-      priceCurrency: "JPY",
-      availability: "https://schema.org/InStock",
-      url: work.fanzaUrl,
-    },
+    ...(work.price && {
+      offers: {
+        "@type": "Offer",
+        price: work.price,
+        priceCurrency: "JPY",
+        availability: "https://schema.org/InStock",
+        url: work.fanzaUrl,
+      },
+    }),
     ...(work.rating && {
       aggregateRating: {
         "@type": "AggregateRating",

@@ -9,6 +9,7 @@ export function Header() {
           <div className="flex items-center gap-0.5">
             <span className="text-lg font-bold text-primary md:text-xl">AV</span>
             <span className="text-lg font-bold text-foreground md:text-xl">-ADB</span>
+            <span className="rounded bg-muted px-1 py-0.5 text-[10px] text-muted-foreground">PR</span>
           </div>
           <span className="text-[9px] text-muted-foreground md:text-[10px]">
             AV動画を探す検索ツール
