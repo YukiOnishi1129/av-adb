@@ -66,15 +66,9 @@ function generateSitemap() {
   // 特集データ
   const featureRecommendations = loadJson("feature_recommendations.json");
 
-  // 女優一覧（作品から抽出）
-  const actressSet = new Set();
-  for (const work of works) {
-    const actresses = work.actresses || [];
-    for (const actress of actresses) {
-      if (actress) actressSet.add(actress);
-    }
-  }
-  const allActresses = Array.from(actressSet);
+  // 女優一覧（女優マスタから取得）
+  const allActressesData = loadJson("actresses.json");
+  const allActresses = allActressesData.map(a => a.name).filter(Boolean);
 
   // ジャンル一覧（作品から抽出）
   const genreSet = new Set();
