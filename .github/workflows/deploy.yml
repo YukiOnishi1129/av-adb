@@ -8,8 +8,8 @@ on:
       - 'docs/**'
       - '**/*.md'
   schedule:
-    # 毎日05:00 JST (20:00 UTC) - 深夜の空き時間帯
-    - cron: '0 20 * * *'
+    # 毎日18:30 JST (09:30 UTC) - 他サイトデプロイ(15:00-17:30)完了後の単独枠
+    - cron: '30 9 * * *'
   workflow_dispatch:
 
 jobs:
