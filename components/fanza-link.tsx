@@ -38,6 +38,7 @@ export function FanzaLink({
       window.gtag("event", "fanza_click", {
         content_id: cid,
         source,
+        transport_type: "beacon",
       });
     }
   };
