@@ -63,23 +63,35 @@ export async function generateMetadata({
   const salePrefix = isOnSale ? `【${discountPercent}%OFF】` : "";
   const pageTitle = `${salePrefix}${cleanTitle}${titleSuffix} | AV-ADB`;
 
-  // SEO重視のdescription: 評価・価格・女優・ジャンル・収録時間 + ai_summary 抜粋
-  const ratingText = work.rating > 0 ? `★${work.rating.toFixed(1)}（レビュー${work.reviewCount || 0}件）` : "";
+  // SEO重視のdescription:
+  // 検索結果（SERP）に表示される冒頭60文字でユーザーが「誰が出ている何の作品か」即理解できるよう、
+  // 順番は: ①作品の本質（女優+ジャンル+作品種別） → ②本文（aiAppealPoints） → ③評価/価格/収録時間（詳細）
+  const ratingText = work.rating > 0 ? `★${work.rating.toFixed(1)}（${work.reviewCount || 0}件）` : "";
   const priceText = isOnSale
-    ? `${discountPercent}%OFF：${work.listPrice.toLocaleString()}円→${work.price.toLocaleString()}円`
+    ? `${discountPercent}%OFF ${work.price.toLocaleString()}円`
     : work.price > 0 ? `${work.price.toLocaleString()}円` : "";
   const durationInfo = work.duration > 0 ? `${work.duration}分` : "";
+  const detailParts = [ratingText, priceText, durationInfo].filter(Boolean).join("｜");
+
+  // 冒頭60文字に詰める核心情報: 「{女優}出演の{ジャンル}AV動画」
   const actressInfo = topActresses.length > 0 ? topActresses.join("・") : "";
   const genreInfo = topGenres.length > 0 ? topGenres.join("・") : "";
-  const metaParts = [ratingText, priceText, durationInfo, actressInfo, genreInfo].filter(Boolean).join("｜");
+  const leadCore = actressInfo && genreInfo
+    ? `${actressInfo}出演${genreInfo}のAV動画レビュー。`
+    : actressInfo
+    ? `${actressInfo}出演のAV動画レビュー。`
+    : genreInfo
+    ? `${genreInfo}のAV動画レビュー。`
+    : `アダルトAV動画レビュー。`;
 
-  const baseBody = work.aiAppealPoints || work.aiSummary || work.aiRecommendReason
-    || `${work.title}のレビュー・詳細情報。`;
-  const remaining = Math.max(0, 155 - metaParts.length - 4);
+  const baseBody = work.aiAppealPoints || work.aiSummary || work.aiRecommendReason || "";
+  const usedBeforeBody = leadCore.length;
+  const reservedAfterBody = detailParts.length + 1;
+  const remaining = Math.max(0, 158 - usedBeforeBody - reservedAfterBody);
   const trimmedBody = baseBody.length > remaining
     ? baseBody.slice(0, Math.max(0, remaining - 1)) + "…"
     : baseBody;
-  const description = metaParts ? `${metaParts}｜${trimmedBody}` : trimmedBody;
+  const description = [leadCore + trimmedBody, detailParts].filter(Boolean).join("｜");
 
   return {
     title: pageTitle,
@@ -457,24 +469,24 @@ export default async function WorkDetailPage({
 
             {/* おすすめの理由（2d-adb風） */}
             {work.aiRecommendReason && (
-              <section className="mt-6 rounded-lg bg-secondary/50 p-4">
-                <h2 className="text-sm font-medium text-muted-foreground">おすすめの理由</h2>
+              <section id="recommend-reason" className="mt-6 rounded-lg bg-secondary/50 p-4">
+                <h2 id="recommend-reason-heading" className="text-sm font-medium text-muted-foreground">おすすめの理由</h2>
                 <p className="mt-2 text-foreground">{work.aiRecommendReason}</p>
               </section>
             )}
 
             {/* 要約（2d-adb風） */}
             {work.aiSummary && (
-              <section className="mt-4 rounded-lg bg-secondary/50 p-4">
-                <h2 className="text-sm font-medium text-muted-foreground">要約</h2>
+              <section id="summary" className="mt-4 rounded-lg bg-secondary/50 p-4">
+                <h2 id="summary-heading" className="text-sm font-medium text-muted-foreground">要約</h2>
                 <p className="mt-2 text-foreground">{work.aiSummary}</p>
               </section>
             )}
 
             {/* こんな人におすすめ（2d-adb風） */}
             {work.aiTargetAudience && (
-              <section className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950">
-                <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+              <section id="target-audience" className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950">
+                <h2 id="target-audience-heading" className="text-sm font-bold text-gray-900 dark:text-gray-100">
                   🎯 こんな人におすすめ
                 </h2>
                 <p className="mt-2 text-gray-800 dark:text-gray-200">
@@ -485,8 +497,8 @@ export default async function WorkDetailPage({
 
             {/* 刺さりポイント（2d-adb風） */}
             {work.aiAppealPoints && (
-              <section className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950">
-                <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+              <section id="appeal-points" className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950">
+                <h2 id="appeal-points-heading" className="text-sm font-bold text-gray-900 dark:text-gray-100">
                   これが刺さる！
                 </h2>
                 <p className="mt-2 text-gray-800 dark:text-gray-200">
@@ -497,8 +509,8 @@ export default async function WorkDetailPage({
 
             {/* 注意点（2d-adb風） */}
             {work.aiWarnings && (
-              <section className="mt-4 rounded-lg border border-rose-200 bg-rose-50 p-4 dark:border-rose-800 dark:bg-rose-950">
-                <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+              <section id="warnings" className="mt-4 rounded-lg border border-rose-200 bg-rose-50 p-4 dark:border-rose-800 dark:bg-rose-950">
+                <h2 id="warnings-heading" className="text-sm font-bold text-gray-900 dark:text-gray-100">
                   ⚠️ 注意点
                 </h2>
                 <p className="mt-2 text-gray-800 dark:text-gray-200">
@@ -509,8 +521,8 @@ export default async function WorkDetailPage({
 
             {/* av-adb編集部レビュー（体験レポを置き換え） */}
             {work.aiReview && (
-              <section className="mt-6 rounded-lg border border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50 p-4 dark:border-purple-800 dark:from-purple-950 dark:to-indigo-950">
-                <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+              <section id="review" className="mt-6 rounded-lg border border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50 p-4 dark:border-purple-800 dark:from-purple-950 dark:to-indigo-950">
+                <h2 id="review-heading" className="text-sm font-bold text-gray-900 dark:text-gray-100">
                   📝 av-adb編集部レビュー
                 </h2>
                 <div className="mt-2 space-y-3">
@@ -652,8 +664,8 @@ export default async function WorkDetailPage({
         <div className="mt-12 space-y-10">
           {/* 同じ女優の作品 */}
           {actressWorks.length > 0 && mainActress && (
-            <section>
-              <h2 className="mb-4 text-lg font-bold">
+            <section id="actress-works">
+              <h2 id="actress-works-heading" className="mb-4 text-lg font-bold">
                 🎬 {mainActress}の他の作品
               </h2>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
@@ -666,8 +678,8 @@ export default async function WorkDetailPage({
 
           {/* 似た作品 */}
           {similarWorks.length > 0 && (
-            <section>
-              <h2 className="mb-4 text-lg font-bold">
+            <section id="similar-works">
+              <h2 id="similar-works-heading" className="mb-4 text-lg font-bold">
                 🔥 この作品が好きな人はこれも
               </h2>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
@@ -680,8 +692,8 @@ export default async function WorkDetailPage({
 
           {/* 人気作品 */}
           {popularWorks.length > 0 && (
-            <section>
-              <h2 className="mb-4 text-lg font-bold">
+            <section id="popular-works">
+              <h2 id="popular-works-heading" className="mb-4 text-lg font-bold">
                 👑 今人気の作品
               </h2>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
