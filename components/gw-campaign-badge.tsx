@@ -1,5 +1,9 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
+
+const subscribe = () => () => {};
+
 declare global {
   interface Window {
     gtag?: (
@@ -13,9 +17,26 @@ declare global {
 interface GwCampaignBadgeProps {
   href: string;
   workId?: string;
+  // キャンペーン終了日時（ISO 8601）。hydration時に期限切れなら非表示にする
+  endDate?: string;
 }
 
-export function GwCampaignBadge({ href, workId }: GwCampaignBadgeProps) {
+export function GwCampaignBadge({
+  href,
+  workId,
+  endDate,
+}: GwCampaignBadgeProps) {
+  // SSR/SSG 時は false（バッジ表示）、hydration 後にクライアントで期限判定
+  const isExpired = useSyncExternalStore(
+    subscribe,
+    () => {
+      if (!endDate) return false;
+      const end = new Date(endDate).getTime();
+      return Number.isFinite(end) && Date.now() > end;
+    },
+    () => false,
+  );
+
   const handleClick = () => {
     if (typeof window !== "undefined" && window.gtag) {
       window.gtag("event", "gw_campaign_badge_click", {
@@ -25,6 +46,8 @@ export function GwCampaignBadge({ href, workId }: GwCampaignBadgeProps) {
       });
     }
   };
+
+  if (isExpired) return null;
 
   return (
     <a

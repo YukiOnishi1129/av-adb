@@ -11,7 +11,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FanzaLink } from "@/components/fanza-link";
 import { getFanzaInitialDiscount } from "@/lib/fanza-promo";
-import { isGwCampaignWork, getGwCampaignAffiliateUrl } from "@/lib/gw-campaign";
+import { isGwCampaignWork, getGwCampaignAffiliateUrl, CAMPAIGN_END_ISO as GW_END } from "@/lib/gw-campaign";
 import { GwCampaignBadge } from "@/components/gw-campaign-badge";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
@@ -204,6 +204,7 @@ export default async function WorkDetailPage({
                 <GwCampaignBadge
                   href={getGwCampaignAffiliateUrl()}
                   workId={work.id}
+                  endDate={GW_END}
                 />
               )}
 

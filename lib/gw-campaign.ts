@@ -8,7 +8,8 @@ const GW_CAMPAIGN_LANDING_URL = "https://video.dmm.co.jp/feature/half/";
 const FANZA_AFFILIATE_ID = "monodata-994";
 
 // キャンペーン全体の終了日（最終弾の終了 = 第11弾 2026/05/15 09:59）
-const CAMPAIGN_END = new Date("2026-05-15T09:59:00+09:00");
+export const CAMPAIGN_END_ISO = "2026-05-15T09:59:00+09:00";
+const CAMPAIGN_END = new Date(CAMPAIGN_END_ISO);
 
 // キャンペーン全体が現時点で有効か
 export function isGwCampaignActive(now: Date = new Date()): boolean {
