@@ -5,7 +5,10 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 
 export const metadata: Metadata = {
+  title: "プライバシーポリシー | AV-ADB",
+  description: "AV-ADBのプライバシーポリシー。当サイトでの個人情報の取り扱い、Cookie・アクセス解析・アフィリエイトプログラムについて。",
   alternates: { canonical: "/privacy/" },
+  robots: { index: false, follow: true },
 };
 
 export default function PrivacyPage() {

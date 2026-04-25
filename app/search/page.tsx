@@ -11,6 +11,8 @@ import {
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
+  title: "AV動画検索 - 女優・ジャンル・価格で絞り込み | AV-ADB",
+  description: "FANZAアダルトAV動画をキーワード・女優・ジャンル・価格・評価で絞り込み検索。中出し・痴女・巨乳・人妻など人気ジャンル別、セール中・お買い得作品も検索可能。レビュー・感想・抜きどころも掲載。",
   alternates: { canonical: "/search/" },
 };
 

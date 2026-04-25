@@ -7,6 +7,8 @@ import { WorkCard } from "@/components/work-card";
 import { getWorks } from "@/lib/data-loader";
 
 export const metadata: Metadata = {
+  title: "AV動画ランキング - FANZA売上TOP一覧 | AV-ADB",
+  description: "FANZAアダルトAV動画の最新売上ランキングTOP一覧。今売れている人気作品を女優別・ジャンル別にチェック。レビュー・感想・抜きどころも掲載。迷ったらランキングから選べばハズレなし。",
   alternates: { canonical: "/ranking/" },
 };
 

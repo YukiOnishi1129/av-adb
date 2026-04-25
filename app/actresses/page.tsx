@@ -9,6 +9,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
+  title: "AV女優一覧 - 人気女優のおすすめ作品 | AV-ADB",
+  description: "FANZAで人気のAV女優一覧。出演本数・評価別に並び替え可能。お気に入り女優の代表作・最新作をレビュー・感想付きでチェック。女優別ランキング・セール情報も毎日更新。",
   alternates: { canonical: "/actresses/" },
 };
 import {

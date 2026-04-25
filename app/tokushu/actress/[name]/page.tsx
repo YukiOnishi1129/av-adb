@@ -42,10 +42,19 @@ export async function generateMetadata({ params }: Props) {
     return { title: "女優特集 | AV-ADB" };
   }
 
+  const year = new Date().getFullYear();
+  const title = `【${year}年最新】${feature.name}のAV作品おすすめ特集 レビュー・感想・セール情報 | AV-ADB`;
+  const description = `${feature.name}が出演するアダルトAV動画を厳選レビュー特集。${feature.description}FANZAで人気の${feature.name}作品の評価・あらすじ・抜きどころ・セール情報を毎日更新中。`.slice(0, 160);
+
   return {
-    title: `${feature.name}のAV特集 レビュー・感想 | AV-ADB`,
-    description: `${feature.name}のAV作品レビュー・感想。${feature.description}`,
+    title,
+    description,
     alternates: { canonical: `/tokushu/actress/${rawName}/` },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+    },
   };
 }
 

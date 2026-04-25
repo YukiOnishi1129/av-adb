@@ -18,7 +18,7 @@ export function WorkCard({ work }: { work: Work }) {
         <div className="relative aspect-video overflow-hidden bg-muted">
           <img
             src={work.thumbnailUrl}
-            alt={work.title}
+            alt={`${work.title}${work.actresses && work.actresses.length > 0 ? ` - ${work.actresses.slice(0, 2).join("・")}` : ""}${work.genres && work.genres.length > 0 ? `（${work.genres.slice(0, 3).join("・")}）` : ""}のAV動画`}
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />
           {isOnSale && work.discountPercent > 0 && (

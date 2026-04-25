@@ -6,6 +6,8 @@ import { FeaturedBanners } from "@/components/featured-banners";
 import { SaleFilterSort } from "@/components/sale-filter-sort";
 
 export const metadata: Metadata = {
+  title: "セール中のAV動画一覧 - 最大80%OFFのお得な作品 | AV-ADB",
+  description: "FANZAでセール中のアダルトAV動画を厳選レビュー。割引率・価格順で並び替え可能。最大80%OFFの大型セール作品から、500円以下のお買い得作品までまとめてチェック。レビュー・感想・抜きどころも掲載。",
   alternates: { canonical: "/sale/" },
 };
 import {

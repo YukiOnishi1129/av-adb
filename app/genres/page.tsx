@@ -8,6 +8,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
+  title: "AV動画ジャンル一覧 - 性癖別おすすめ作品 | AV-ADB",
+  description: "FANZAアダルトAV動画をジャンル別に検索。中出し・痴女・巨乳・人妻・女子校生・ハーレム・痴漢など人気ジャンルの作品を網羅。ジャンルごとのおすすめ作品をレビュー・感想付きで毎日更新。",
   alternates: { canonical: "/genres/" },
 };
 import {

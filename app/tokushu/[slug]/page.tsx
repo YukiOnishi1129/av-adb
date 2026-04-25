@@ -57,10 +57,9 @@ export async function generateMetadata({
   }
 
   const year = new Date().getFullYear();
-  const title = `【${year}年】${feature.name}AVおすすめ${feature.workCount}選 レビュー・感想｜厳選AV作品 | AV-ADB`;
-  const description = `${feature.name}好きにおすすめのAV作品を厳選${feature.workCount}作品レビュー。${
-    feature.headline || `${feature.name}ジャンルで評価の高い作品`
-  }をランキング形式で掲載。感想・セール情報も随時更新中。`;
+  const title = `【${year}年最新】${feature.name}AVおすすめ${feature.workCount}選 レビュー・感想・セール情報 | AV-ADB`;
+  const headlineText = feature.headline ? `${feature.headline}。` : "";
+  const description = `${feature.name}好きに刺さるアダルトAV動画を厳選${feature.workCount}作品レビュー。${headlineText}${feature.name}ジャンルで評価の高い人気作品をランキング形式で掲載。FANZAでの評価・あらすじ・抜きどころ・セール情報を毎日更新。${year}年最新の${feature.name}AV特集。`.slice(0, 160);
 
   const ogImage = feature.thumbnailUrl || undefined;
 

@@ -116,12 +116,12 @@ export default async function WorkDetailPage({
   const { id } = await params;
   const work = await getWorkById(id);
 
-  // 関連作品を取得
+  // 関連作品を取得（SEO: 内部リンク密度を上げるため、各セクション8件）
   const mainActress = work?.actresses?.[0];
   const [actressWorks, similarWorks, popularWorks] = await Promise.all([
-    mainActress && work ? getWorksByActressExcluding(mainActress, work.id, 4) : Promise.resolve([]),
-    work ? getSimilarWorks(work, 4) : Promise.resolve([]),
-    work ? getPopularWorks(work.id, 4) : Promise.resolve([]),
+    mainActress && work ? getWorksByActressExcluding(mainActress, work.id, 8) : Promise.resolve([]),
+    work ? getSimilarWorks(work, 8) : Promise.resolve([]),
+    work ? getPopularWorks(work.id, 8) : Promise.resolve([]),
   ]);
 
   if (!work) {
@@ -201,7 +201,7 @@ export default async function WorkDetailPage({
             <div className="relative aspect-video overflow-hidden rounded-lg bg-muted">
               <img
                 src={work.thumbnailUrl}
-                alt={work.title}
+                alt={`${work.title}${work.actresses.length > 0 ? ` - ${work.actresses.slice(0, 2).join("・")}` : ""}${work.genres && work.genres.length > 0 ? `（${work.genres.slice(0, 3).join("・")}）` : ""}のAV動画サムネイル`}
                 className="h-full w-full object-cover"
               />
               {isOnSale && work.discountPercent > 0 && (
