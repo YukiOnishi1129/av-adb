@@ -3,9 +3,13 @@ import Link from "next/link";
 import type { Work } from "@/lib/data-loader";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { getFanzaInitialDiscount } from "@/lib/fanza-promo";
+import { isGwCampaignWork } from "@/lib/gw-campaign";
 
 export function WorkCard({ work }: { work: Work }) {
   const isOnSale = work.listPrice > 0 && work.price < work.listPrice;
+  const isCouponEligible = getFanzaInitialDiscount(work) !== null;
+  const isGwTarget = isGwCampaignWork(work);
 
   return (
     <Link href={`/works/${work.id}`}>
@@ -24,6 +28,12 @@ export function WorkCard({ work }: { work: Work }) {
             >
               {work.discountPercent}%OFF
             </Badge>
+          )}
+          {/* GWキャンペーン対象バッジ */}
+          {isGwTarget && (
+            <span className="absolute right-2 top-2 inline-flex items-center gap-0.5 rounded-md bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-md">
+              🎉 GW半額
+            </span>
           )}
           {work.duration > 0 && (
             <Badge
@@ -113,6 +123,13 @@ export function WorkCard({ work }: { work: Work }) {
               ) : null}
             </div>
           </div>
+
+          {/* FANZA初回購入クーポン対象表示 */}
+          {isCouponEligible && (
+            <p className="mt-1.5 text-[10px] font-medium text-pink-500">
+              💡 FANZA初回なら -500円OFF対象
+            </p>
+          )}
         </CardContent>
       </Card>
     </Link>
