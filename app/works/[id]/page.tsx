@@ -12,6 +12,7 @@ import { notFound } from "next/navigation";
 import { FanzaLink } from "@/components/fanza-link";
 import { getFanzaInitialDiscount } from "@/lib/fanza-promo";
 import { isGwCampaignWork, getGwCampaignAffiliateUrl } from "@/lib/gw-campaign";
+import { GwCampaignBadge } from "@/components/gw-campaign-badge";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { BreadcrumbJsonLd, ProductJsonLd, ReviewJsonLd } from "@/components/json-ld";
@@ -200,16 +201,10 @@ export default async function WorkDetailPage({
             <div className={`mt-4 rounded-lg border p-4 ${isOnSale ? "border-orange-500/50 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30" : "border-border bg-card"}`}>
               {/* GW 50%OFFキャンペーン対象バッジ（タイトルに【50%OFFキャンペーン第○弾】を含む作品のみ、〜2026/05/15まで） */}
               {isGwCampaignWork(work) && (
-                <a
+                <GwCampaignBadge
                   href={getGwCampaignAffiliateUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mb-3 flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 px-3 py-2 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02]"
-                >
-                  <span>🎉</span>
-                  <span>GOLDEN WEEK 50%OFF キャンペーン対象</span>
-                  <span className="text-xs opacity-90">→ 特集を見る</span>
-                </a>
+                  workId={work.id}
+                />
               )}
 
               {/* セール情報バナー */}
