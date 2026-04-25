@@ -26,6 +26,15 @@ import {
   getPopularWorks,
 } from "@/lib/data-loader";
 
+// FANZAタイトルから割引文字列等のノイズを除去（SEO用にクリーンなタイトルに）
+function sanitizeTitleForSeo(rawTitle: string): string {
+  if (!rawTitle) return "";
+  let cleaned = rawTitle;
+  cleaned = cleaned.replace(/【[^】]*(?:OFF|まで|セール|キャンペーン|期間限定|弾|割引)[^】]*】/g, "");
+  cleaned = cleaned.replace(/\s+/g, " ").trim();
+  return cleaned;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -40,23 +49,44 @@ export async function generateMetadata({
     };
   }
 
-  const ratingText = work.rating > 0 ? `★${work.rating.toFixed(1)}` : "";
-  const saleText = work.listPrice > 0 && work.price < work.listPrice
-    ? `${Math.round((1 - work.price / work.listPrice) * 100)}%OFFセール中！`
-    : work.price > 0 ? `¥${work.price.toLocaleString()}〜` : "";
-  const metaPrefix = [ratingText, saleText].filter(Boolean).join(" ");
-  const description = metaPrefix
-    ? `${metaPrefix} ${work.aiSummary || work.aiRecommendReason || `${work.title}のレビュー・詳細情報。${work.actresses.join("、")}出演。`}`
-    : work.aiSummary || work.aiRecommendReason || `${work.title}のレビュー・詳細情報。${work.actresses.join("、")}出演。`;
+  const isOnSale = work.listPrice > 0 && work.price < work.listPrice;
+  const discountPercent = isOnSale
+    ? Math.round((1 - work.price / work.listPrice) * 100)
+    : 0;
+  const cleanTitle = sanitizeTitleForSeo(work.title) || work.title;
 
-  const pageTitle = `${work.title} レビュー・感想 | AV-ADB`;
+  // SEO重視のタイトル: 「作品名｜女優名・ジャンル1・ジャンル2のレビュー・感想 | AV-ADB」
+  const topActresses = (work.actresses || []).slice(0, 2);
+  const topGenres = (work.genres || []).slice(0, 2);
+  const titleParts: string[] = [...topActresses, ...topGenres];
+  const titleSuffix = titleParts.length > 0 ? `｜${titleParts.join("・")}のレビュー・感想` : "｜レビュー・感想";
+  const salePrefix = isOnSale ? `【${discountPercent}%OFF】` : "";
+  const pageTitle = `${salePrefix}${cleanTitle}${titleSuffix} | AV-ADB`;
+
+  // SEO重視のdescription: 評価・価格・女優・ジャンル・収録時間 + ai_summary 抜粋
+  const ratingText = work.rating > 0 ? `★${work.rating.toFixed(1)}（レビュー${work.reviewCount || 0}件）` : "";
+  const priceText = isOnSale
+    ? `${discountPercent}%OFF：${work.listPrice.toLocaleString()}円→${work.price.toLocaleString()}円`
+    : work.price > 0 ? `${work.price.toLocaleString()}円` : "";
+  const durationInfo = work.duration > 0 ? `${work.duration}分` : "";
+  const actressInfo = topActresses.length > 0 ? topActresses.join("・") : "";
+  const genreInfo = topGenres.length > 0 ? topGenres.join("・") : "";
+  const metaParts = [ratingText, priceText, durationInfo, actressInfo, genreInfo].filter(Boolean).join("｜");
+
+  const baseBody = work.aiAppealPoints || work.aiSummary || work.aiRecommendReason
+    || `${work.title}のレビュー・詳細情報。`;
+  const remaining = Math.max(0, 155 - metaParts.length - 4);
+  const trimmedBody = baseBody.length > remaining
+    ? baseBody.slice(0, Math.max(0, remaining - 1)) + "…"
+    : baseBody;
+  const description = metaParts ? `${metaParts}｜${trimmedBody}` : trimmedBody;
 
   return {
     title: pageTitle,
     description,
     alternates: { canonical: `/works/${work.id}/` },
     openGraph: {
-      title: work.title,
+      title: cleanTitle,
       description,
       type: "website",
       images: [work.thumbnailUrl],
@@ -64,7 +94,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: work.title,
+      title: cleanTitle,
       description,
       images: [work.thumbnailUrl],
     },
@@ -197,6 +227,39 @@ export default async function WorkDetailPage({
             <h1 className="mt-4 text-xl font-bold leading-tight md:text-2xl">
               {work.title}
             </h1>
+
+            {/* SEO重視のリード文（h1直下にキーワード詰め込み、ユーザーにも有用な情報サマリ） */}
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {work.actresses.length > 0 && (
+                <>
+                  <span className="font-semibold text-foreground">
+                    {work.actresses.slice(0, 3).join("・")}
+                  </span>
+                  出演の
+                </>
+              )}
+              アダルトAV動画
+              {work.duration > 0 ? `（${work.duration}分）` : ""}
+              のレビュー・感想ページ。
+              {work.genres && work.genres.length > 0 && (
+                <>
+                  ジャンルは
+                  <span className="text-foreground">
+                    {work.genres.slice(0, 5).join("・")}
+                  </span>
+                  。
+                </>
+              )}
+              {work.rating > 0 && work.reviewCount > 0 ? (
+                <>
+                  評価は
+                  <span className="font-semibold text-foreground">
+                    ★{work.rating.toFixed(1)}（レビュー{work.reviewCount}件）
+                  </span>
+                  。
+                </>
+              ) : null}
+            </p>
 
             {/* ファーストビューCTA */}
             <div className={`mt-4 rounded-lg border p-4 ${isOnSale ? "border-orange-500/50 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30" : "border-border bg-card"}`}>
