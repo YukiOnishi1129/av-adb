@@ -4,6 +4,7 @@ import { Header } from "@/components/header";
 import { HorizontalScrollSection } from "@/components/horizontal-scroll-section";
 import { SaleBanner } from "@/components/sale-banner";
 import { FeaturedBanners } from "@/components/featured-banners";
+import { isGwCampaignActive, getGwCampaignAffiliateUrl } from "@/lib/gw-campaign";
 import { Badge } from "@/components/ui/badge";
 import {
   getWorksByRanking,
@@ -62,6 +63,27 @@ export default async function HomePage() {
       <Header />
 
       <main className="mx-auto max-w-5xl px-4 py-6 pb-24 lg:pb-6">
+        {/* GW 50%OFFキャンペーンバナー（〜2026/05/15まで） */}
+        {isGwCampaignActive() && (
+          <a
+            href={getGwCampaignAffiliateUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-4 flex items-center justify-between gap-3 rounded-lg bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 p-4 text-white shadow-lg transition-transform hover:scale-[1.01]"
+          >
+            <div className="flex flex-col">
+              <span className="text-xs font-bold opacity-90">🎉 期間限定 〜5/15</span>
+              <span className="text-lg font-black tracking-wide md:text-xl">
+                GOLDEN WEEK 50%OFF
+              </span>
+              <span className="text-xs opacity-90">対象作品が今だけ半額！</span>
+            </div>
+            <span className="shrink-0 rounded-full bg-white/20 px-3 py-1.5 text-sm font-bold backdrop-blur">
+              特集を見る →
+            </span>
+          </a>
+        )}
+
         {/* セールバナー */}
         {saleWorks.length > 0 && <SaleBanner saleWorks={saleWorks} />}
 

@@ -23,6 +23,9 @@ interface FanzaLinkProps {
   source?: string;
   children: React.ReactNode;
   className?: string;
+  // GA4 イベント名を上書きしたい場合に指定（例: "fanza_signup_click"）
+  // 省略時は "fanza_click"（既存挙動）
+  eventName?: string;
 }
 
 export function FanzaLink({
@@ -31,11 +34,12 @@ export function FanzaLink({
   source = "unknown",
   children,
   className,
+  eventName,
 }: FanzaLinkProps) {
   const handleClick = () => {
     if (typeof window !== "undefined" && window.gtag) {
       const cid = contentId || extractContentId(url);
-      window.gtag("event", "fanza_click", {
+      window.gtag("event", eventName ?? "fanza_click", {
         content_id: cid,
         source,
         transport_type: "beacon",

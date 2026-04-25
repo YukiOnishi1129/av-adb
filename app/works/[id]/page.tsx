@@ -10,6 +10,8 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FanzaLink } from "@/components/fanza-link";
+import { getFanzaInitialDiscount } from "@/lib/fanza-promo";
+import { isGwCampaignWork, getGwCampaignAffiliateUrl } from "@/lib/gw-campaign";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { BreadcrumbJsonLd, ProductJsonLd, ReviewJsonLd } from "@/components/json-ld";
@@ -196,6 +198,20 @@ export default async function WorkDetailPage({
 
             {/* ファーストビューCTA */}
             <div className={`mt-4 rounded-lg border p-4 ${isOnSale ? "border-orange-500/50 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30" : "border-border bg-card"}`}>
+              {/* GW 50%OFFキャンペーン対象バッジ（タイトルに【50%OFFキャンペーン第○弾】を含む作品のみ、〜2026/05/15まで） */}
+              {isGwCampaignWork(work) && (
+                <a
+                  href={getGwCampaignAffiliateUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mb-3 flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 px-3 py-2 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02]"
+                >
+                  <span>🎉</span>
+                  <span>GOLDEN WEEK 50%OFF キャンペーン対象</span>
+                  <span className="text-xs opacity-90">→ 特集を見る</span>
+                </a>
+              )}
+
               {/* セール情報バナー */}
               {isOnSale && work.discountPercent > 0 && (
                 <div className="mb-3 flex items-center justify-center gap-2">
@@ -258,6 +274,48 @@ export default async function WorkDetailPage({
               <p className="mt-2 text-center text-xs text-muted-foreground">
                 FANZAの商品ページへ移動します
               </p>
+
+              {/* FANZA動画 初回500円OFF訴求（条件を満たす作品のみ） */}
+              {(() => {
+                const discount = getFanzaInitialDiscount(work);
+                if (!discount) return null;
+                return (
+                  <div className="mt-3 rounded-md border-2 border-pink-500 bg-gradient-to-br from-pink-500/15 to-pink-600/10 p-3 shadow-md">
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="inline-flex items-center rounded-full bg-pink-500 px-2 py-0.5 text-xs font-bold text-white">
+                        初回購入限定
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        FANZA動画 はじめての方
+                      </span>
+                    </div>
+                    <p className="text-base font-bold text-foreground">
+                      実質{" "}
+                      <span className="text-2xl text-pink-500">
+                        ¥{discount.effectivePrice.toLocaleString()}
+                      </span>
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        （¥{discount.couponOff.toLocaleString()}OFFクーポン適用時）
+                      </span>
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      無料会員登録でクーポン取得可能（7日間有効）
+                    </p>
+                    <FanzaLink
+                      url={discount.couponLandingUrl}
+                      contentId={work.id}
+                      source="welcome_coupon_cta"
+                      eventName="fanza_signup_click"
+                      className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-pink-500 py-2.5 font-bold text-white transition-colors hover:bg-pink-600"
+                    >
+                      クーポンを取得する →
+                    </FanzaLink>
+                    <p className="mt-1.5 text-center text-[10px] text-muted-foreground">
+                      ※対象商品に限ります
+                    </p>
+                  </div>
+                );
+              })()}
             </div>
 
             {/* 再生時間・配信日 */}
