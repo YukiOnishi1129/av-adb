@@ -450,9 +450,19 @@ export default async function WorkDetailPage({
                 <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">
                   📝 av-adb編集部レビュー
                 </h2>
-                <p className="mt-2 leading-relaxed text-gray-800 dark:text-gray-200">
-                  {work.aiReview}
-                </p>
+                <div className="mt-2 space-y-3">
+                  {work.aiReview
+                    .split(/\n\n+/)
+                    .filter((paragraph) => paragraph.trim().length > 0)
+                    .map((paragraph, idx) => (
+                      <p
+                        key={idx}
+                        className="leading-relaxed text-gray-800 dark:text-gray-200"
+                      >
+                        {paragraph.trim()}
+                      </p>
+                    ))}
+                </div>
               </section>
             )}
 
