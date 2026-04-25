@@ -40,6 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: { canonical: "/sale/tokushu/" },
     openGraph: {
       title,
       description,

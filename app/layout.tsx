@@ -13,6 +13,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://av-adb.com"),
   title: "AV-ADB | アダルトAV動画レビュー・おすすめ作品紹介",
   description:
     "FANZAの人気作品をレビュー。AV動画 おすすめランキング、セール情報、女優別作品まとめ。高画質対応作品を厳選紹介。",

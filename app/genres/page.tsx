@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { ChevronRight, Tag, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
@@ -5,6 +6,10 @@ import { Header } from "@/components/header";
 import { FeaturedBanners } from "@/components/featured-banners";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/genres/" },
+};
 import {
   getGenres,
   getLatestSaleFeature,

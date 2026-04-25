@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import { ChevronRight, Crown } from "lucide-react";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { WorkCard } from "@/components/work-card";
 import { getWorks } from "@/lib/data-loader";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/ranking/" },
+};
 
 export default async function RankingPage() {
   const works = await getWorks();

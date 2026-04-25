@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight, Users } from "lucide-react";
 import { Header } from "@/components/header";
@@ -6,6 +7,10 @@ import { FeaturedBanners } from "@/components/featured-banners";
 import { ActressListContent } from "@/components/actress-list-content";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/actresses/" },
+};
 import {
   getActresses,
   getLatestSaleFeature,

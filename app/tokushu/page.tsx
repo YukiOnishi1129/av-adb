@@ -20,6 +20,7 @@ export const dynamic = "force-static";
 export const metadata: Metadata = {
   title: "特集一覧 | AV-ADB",
   description: "ジャンル別・女優別のAV作品特集一覧。巨乳、ハーレム、女子校生など人気ジャンルや、人気女優の作品を厳選してお届けします。",
+  alternates: { canonical: "/tokushu/" },
   openGraph: {
     title: "特集一覧 | AV-ADB",
     description: "ジャンル別・女優別のAV作品特集一覧。人気ジャンルや人気女優の作品を厳選。",

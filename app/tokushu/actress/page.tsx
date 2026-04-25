@@ -10,6 +10,7 @@ export const metadata = {
   title: "人気女優AV特集一覧 | AV-ADB",
   description:
     "FANZAランキング上位の人気女優のAV作品を厳選して特集。迷ったらここから選べば間違いなし。",
+  alternates: { canonical: "/tokushu/actress/" },
 };
 
 export default async function ActressFeatureListPage() {

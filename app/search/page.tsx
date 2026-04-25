@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { SearchContent } from "@/components/search-content";
@@ -8,6 +9,10 @@ import {
 } from "@/lib/data-loader";
 
 export const dynamic = "force-static";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/search/" },
+};
 
 export default async function SearchPage() {
   const [saleFeature, dailyRecommendation] = await Promise.all([

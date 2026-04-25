@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
@@ -7,6 +8,10 @@ import { FeaturedBanners } from "@/components/featured-banners";
 import { CampaignBanner } from "@/components/campaign-banner";
 import { isGwCampaignActive, getGwCampaignAffiliateUrl, CAMPAIGN_END_ISO as GW_END } from "@/lib/gw-campaign";
 import { Badge } from "@/components/ui/badge";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 import {
   getWorksByRanking,
   getSaleWorks,

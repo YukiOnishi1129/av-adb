@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import { Flame } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { FeaturedBanners } from "@/components/featured-banners";
 import { SaleFilterSort } from "@/components/sale-filter-sort";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/sale/" },
+};
 import {
   getWorks,
   getLatestSaleFeature,
