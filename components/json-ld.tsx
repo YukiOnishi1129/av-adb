@@ -27,7 +27,16 @@ interface ProductJsonLdProps {
   work: Work;
 }
 
+// ビルド時の日時を ISO 8601 形式で取得（schema.org の dateModified に使用）
+// 価格・セール情報を毎日更新しているサイトであることを Google に伝える
+function getBuildDateIso(): string {
+  return new Date().toISOString();
+}
+
 export function ProductJsonLd({ work }: ProductJsonLdProps) {
+  const buildDate = getBuildDateIso();
+  const isOnSale = work.listPrice > 0 && work.price < work.listPrice;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -39,6 +48,8 @@ export function ProductJsonLd({ work }: ProductJsonLdProps) {
       "@type": "Brand",
       name: work.maker,
     },
+    // 最終更新日（ビルド毎に自動更新）。「アクティブに更新中のサイト」と Google に伝える
+    dateModified: buildDate,
     ...(work.price && {
       offers: {
         "@type": "Offer",
@@ -46,6 +57,8 @@ export function ProductJsonLd({ work }: ProductJsonLdProps) {
         priceCurrency: "JPY",
         availability: "https://schema.org/InStock",
         url: work.fanzaUrl,
+        // セール終了日が設定されていれば priceValidUntil として伝える
+        ...(isOnSale && work.saleEndDate && { priceValidUntil: work.saleEndDate }),
       },
     }),
     ...(work.rating && {
@@ -71,6 +84,8 @@ export function ReviewJsonLd({ work }: ProductJsonLdProps) {
   const reviewBody = work.aiReview || work.aiAppealPoints || work.aiSummary;
   if (!reviewBody) return null;
 
+  const buildDate = getBuildDateIso();
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Review",
@@ -85,6 +100,9 @@ export function ReviewJsonLd({ work }: ProductJsonLdProps) {
       name: "AV-ADB編集部",
     },
     reviewBody,
+    // レビューの公開日 / 最終更新日（毎日のビルドで更新される）
+    datePublished: buildDate,
+    dateModified: buildDate,
   };
 
   return (

@@ -80,9 +80,10 @@ function generateSitemap() {
   }
   const genres = Array.from(genreSet);
 
-  // XML生成
+  // XML生成（image namespace を追加して画像サイトマップにも対応）
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 `;
 
   // 静的ページ
@@ -96,7 +97,7 @@ function generateSitemap() {
 `;
   }
 
-  // 作品ページ
+  // 作品ページ（サムネ画像を <image:image> で含めて画像検索からの流入を狙う）
   for (const work of works) {
     const lastmod = formatDate(work.release_date || work.updated_at);
     xml += `  <url>
@@ -104,7 +105,16 @@ function generateSitemap() {
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-  </url>
+`;
+    // 画像サイトマップエントリ（FANZA画像URLを <image:loc> に。タイトルをcaptionに）
+    if (work.thumbnail_url) {
+      xml += `    <image:image>
+      <image:loc>${escapeXml(work.thumbnail_url)}</image:loc>
+      <image:title>${escapeXml(work.title || "")}</image:title>
+    </image:image>
+`;
+    }
+    xml += `  </url>
 `;
   }
 

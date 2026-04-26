@@ -235,9 +235,18 @@ export default async function WorkDetailPage({
               )}
             </div>
 
-            {/* タイトル */}
+            {/* タイトル（h1: 検索エンジンへの主要キーワード集約。サブタイトルで女優名・ジャンルを明示） */}
             <h1 className="mt-4 text-xl font-bold leading-tight md:text-2xl">
               {work.title}
+              {(work.actresses.length > 0 || (work.genres && work.genres.length > 0)) && (
+                <span className="block mt-1 text-sm md:text-base font-normal text-muted-foreground">
+                  {work.actresses.length > 0 ? `${work.actresses.slice(0, 2).join("・")}出演` : ""}
+                  {work.genres && work.genres.length > 0
+                    ? `${work.actresses.length > 0 ? "の" : ""}${work.genres.slice(0, 2).join("・")}AV動画`
+                    : "のAV動画"}
+                  レビュー・感想
+                </span>
+              )}
             </h1>
 
             {/* SEO重視のリード文（h1直下にキーワード詰め込み、ユーザーにも有用な情報サマリ） */}
