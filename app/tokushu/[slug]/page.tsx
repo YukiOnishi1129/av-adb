@@ -5,6 +5,9 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { FanzaLink } from "@/components/fanza-link";
 import { SisterSiteBanner } from "@/components/sister-site-banner";
+import { LastUpdated } from "@/components/last-updated";
+import { EditorialCredit } from "@/components/editorial-credit";
+import { ArticleJsonLd } from "@/components/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -275,19 +278,35 @@ export default async function FeatureSlugPage({
     return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
   };
 
+  const year = new Date().getFullYear();
+  const articleHeadline = `【${year}年最新】${feature.name}AVおすすめ${feature.workCount}選`;
+  const articleDescription = feature.headline
+    ? `${feature.name}好きに刺さるアダルトAV動画を厳選${feature.workCount}作品。${feature.headline}`
+    : `${feature.name}ジャンルの人気アダルトAV動画${feature.workCount}作品をAV-ADB編集部が厳選レビュー。`;
+  const articleUrl = `https://av-adb.com/tokushu/${slug}/`;
+
   return (
     <div className="min-h-screen bg-background">
+      <ArticleJsonLd
+        title={articleHeadline}
+        description={articleDescription}
+        url={articleUrl}
+        image={feature.thumbnailUrl ?? undefined}
+      />
       <Header />
 
       <main className="mx-auto max-w-3xl px-4 py-4">
-        {/* パンくず */}
-        <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground">トップ</Link>
-          <ChevronRight className="h-4 w-4" />
-          <Link href="/tokushu" className="hover:text-foreground">特集一覧</Link>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground">{feature.name}特集</span>
-        </nav>
+        {/* パンくず + 最終更新日 */}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">トップ</Link>
+            <ChevronRight className="h-4 w-4" />
+            <Link href="/tokushu" className="hover:text-foreground">特集一覧</Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-foreground">{feature.name}特集</span>
+          </nav>
+          <LastUpdated variant="card" />
+        </div>
 
         {/* ページヘッダー */}
         <div className="mb-6">
@@ -511,6 +530,8 @@ export default async function FeatureSlugPage({
             </Link>
           </section>
         )}
+
+        <EditorialCredit variant="feature" />
 
         {/* 姉妹サイトバナー */}
         <SisterSiteBanner />

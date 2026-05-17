@@ -82,6 +82,9 @@ export async function Footer() {
             <Link href="/search" className="hover:text-foreground">
               検索
             </Link>
+            <Link href="/editorial" className="hover:text-foreground">
+              編集方針
+            </Link>
             <Link href="/privacy" className="hover:text-foreground">
               プライバシーポリシー
             </Link>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Geist } from "next/font/google";
 import { MobileNav } from "@/components/mobile-nav";
-import { WebsiteJsonLd } from "@/components/json-ld";
+import { WebsiteJsonLd, OrganizationJsonLd, WebSiteJsonLd } from "@/components/json-ld";
 import "./globals.css";
 
 const GA_MEASUREMENT_ID = "G-Y87M80KS29";
@@ -75,6 +75,10 @@ export default function RootLayout({
           name="AV-ADB"
           description="FANZAの人気作品をレビュー。AV動画 おすすめランキング、セール情報、女優別作品まとめ。"
         />
+        {/* サイト全体の構造化データ（Organization / WebSite SearchAction）
+            E-E-A-T の権威性・信頼性を Google / AI に伝える */}
+        <OrganizationJsonLd />
+        <WebSiteJsonLd />
         {children}
         <MobileNav />
       </body>

@@ -55,7 +55,8 @@ function generateSitemap() {
     { url: "/tokushu/", priority: "0.8", changefreq: "daily" },
     { url: "/tokushu/actress/", priority: "0.7", changefreq: "weekly" },
     { url: "/recommendations/", priority: "0.8", changefreq: "daily" },
-    { url: "/search/", priority: "0.5", changefreq: "monthly" },
+    // /search/ は robots.txt で Disallow しているのでサイトマップにも含めない
+    { url: "/editorial/", priority: "0.5", changefreq: "monthly" },
     { url: "/privacy/", priority: "0.3", changefreq: "yearly" },
   ];
 

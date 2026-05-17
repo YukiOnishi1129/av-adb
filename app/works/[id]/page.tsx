@@ -16,6 +16,8 @@ import { GwCampaignBadge } from "@/components/gw-campaign-badge";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { BreadcrumbJsonLd, ProductJsonLd, ReviewJsonLd } from "@/components/json-ld";
+import { LastUpdated } from "@/components/last-updated";
+import { EditorialCredit } from "@/components/editorial-credit";
 import { SisterSiteBanner } from "@/components/sister-site-banner";
 import { WorkCard } from "@/components/work-card";
 import {
@@ -197,14 +199,17 @@ export default async function WorkDetailPage({
       {isOnSale && work.discountPercent > 0 && <div className="h-10" />}
 
       <main className="mx-auto max-w-5xl px-4 py-6 pb-24 lg:pb-6">
-        {/* パンくず */}
-        <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground">
-            トップ
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground">{work.title.slice(0, 20)}...</span>
-        </nav>
+        {/* パンくず + 最終更新日 */}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">
+              トップ
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-foreground">{work.title.slice(0, 20)}...</span>
+          </nav>
+          <LastUpdated variant="card" />
+        </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* メインコンテンツ */}
@@ -713,6 +718,9 @@ export default async function WorkDetailPage({
             </section>
           )}
         </div>
+
+        {/* 編集責任主体明示（E-E-A-T） */}
+        <EditorialCredit variant="work" />
 
         {/* 姉妹サイトバナー */}
         <SisterSiteBanner />

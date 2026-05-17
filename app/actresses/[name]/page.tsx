@@ -5,7 +5,9 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { WorkCard } from "@/components/work-card";
 import { ShowMoreGrid } from "@/components/show-more-grid";
-import { BreadcrumbJsonLd } from "@/components/json-ld";
+import { BreadcrumbJsonLd, PersonJsonLd } from "@/components/json-ld";
+import { LastUpdated } from "@/components/last-updated";
+import { EditorialCredit } from "@/components/editorial-credit";
 import { getActresses, getWorksByActress } from "@/lib/data-loader";
 
 interface Props {
@@ -33,7 +35,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? (works.reduce((s, w) => s + (w.rating || 0), 0) / works.length).toFixed(1)
     : null;
 
-  const title = `${name}のAV作品おすすめ${works.length}選 レビュー・感想・セール情報`;
+  const year = new Date().getFullYear();
+  const saleBadge = saleCount > 0 ? `【${saleCount}本セール中】` : "";
+  const title = `${saleBadge}【${year}年最新】${name}のAV作品おすすめ${works.length}選｜出演動画レビュー | AV-ADB`;
   const genreText = topGenres.length > 0 ? `主なジャンルは${topGenres.join("・")}。` : "";
   const ratingText = avgRating ? `平均評価★${avgRating}。` : "";
   const saleText = saleCount > 0 ? `セール中${saleCount}本。` : "";
@@ -79,30 +83,48 @@ export default async function ActressDetailPage({ params }: Props) {
     ? (works.reduce((s, w) => s + (w.rating || 0), 0) / works.length).toFixed(1)
     : null;
 
+  // 代表作のサムネ（評価の高い1件）
+  const topThumbnail = [...works]
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))[0]?.thumbnailUrl ?? null;
+  const actressPageUrl = `https://av-adb.com/actresses/${rawName}/`;
+  const avgRatingNum = works.length > 0
+    ? works.reduce((s, w) => s + (w.rating || 0), 0) / works.length
+    : null;
+
   return (
     <div className="min-h-screen bg-background">
       <BreadcrumbJsonLd
         items={[
           { name: "トップ", url: "https://av-adb.com/" },
           { name: "出演者", url: "https://av-adb.com/actresses/" },
-          { name, url: `https://av-adb.com/actresses/${rawName}/` },
+          { name, url: actressPageUrl },
         ]}
+      />
+      <PersonJsonLd
+        name={name}
+        workCount={works.length}
+        avgRating={avgRatingNum}
+        thumbnailUrl={topThumbnail}
+        pageUrl={actressPageUrl}
       />
       <Header />
 
       <main className="mx-auto max-w-5xl px-4 py-6 pb-24 lg:pb-6">
-        {/* パンくず */}
-        <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground">
-            トップ
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          <Link href="/actresses" className="hover:text-foreground">
-            出演者
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground">{name}</span>
-        </nav>
+        {/* パンくず + 最終更新日 */}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">
+              トップ
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <Link href="/actresses" className="hover:text-foreground">
+              出演者
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-foreground">{name}</span>
+          </nav>
+          <LastUpdated variant="card" />
+        </div>
 
         {/* ヘッダー */}
         <div className="mb-6 flex items-center gap-4">
@@ -166,6 +188,8 @@ export default async function ActressDetailPage({ params }: Props) {
             この出演者の作品はまだ登録されていません。
           </p>
         )}
+
+        <EditorialCredit />
       </main>
 
       <Footer />

@@ -177,3 +177,144 @@ export function ArticleJsonLd({
     />
   );
 }
+
+// =============================================================================
+// Organization JSON-LD（サイト全体の運営主体）
+// =============================================================================
+export function OrganizationJsonLd() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "AV-ADB",
+    alternateName: "AV-ADB編集部",
+    url: "https://av-adb.com",
+    logo: "https://av-adb.com/ogp/recommendation_ogp.png",
+    description:
+      "FANZAアダルト動画の厳選レビューサイト。女優・メーカー・ジャンル別の人気作品・セール情報をAIによる分析と人手の編集で整理してお届けします。",
+    sameAs: [
+      "https://x.com/av_adb",
+    ],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+// =============================================================================
+// WebSite JSON-LD
+// =============================================================================
+export function WebSiteJsonLd() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AV-ADB",
+    alternateName: "AV-ADB | アダルト動画の厳選レビューサイト",
+    url: "https://av-adb.com",
+    inLanguage: "ja",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://av-adb.com/search?q={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+// =============================================================================
+// Person JSON-LD（女優ページ用）
+// =============================================================================
+interface PersonJsonLdProps {
+  name: string;
+  workCount: number;
+  avgRating?: number | null;
+  thumbnailUrl?: string | null;
+  pageUrl: string;
+}
+
+export function PersonJsonLd({
+  name,
+  workCount,
+  avgRating,
+  thumbnailUrl,
+  pageUrl,
+}: PersonJsonLdProps) {
+  const description = `FANZAで配信されるアダルト動画に出演する女優「${name}」の出演作品${workCount}件をまとめたページ。レビュー・評価・人気作・セール情報をAV-ADB編集部が整理しています。`;
+
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name,
+    url: pageUrl,
+    description,
+    jobTitle: "女優",
+    knowsAbout: ["アダルト動画"],
+  };
+
+  if (thumbnailUrl) {
+    jsonLd.image = thumbnailUrl;
+  }
+
+  if (avgRating && avgRating > 0) {
+    jsonLd.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: avgRating.toFixed(2),
+      reviewCount: workCount,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+// =============================================================================
+// Maker (Organization) JSON-LD（メーカーページ用）
+// =============================================================================
+interface MakerOrganizationJsonLdProps {
+  name: string;
+  workCount: number;
+  pageUrl: string;
+}
+
+export function MakerOrganizationJsonLd({
+  name,
+  workCount,
+  pageUrl,
+}: MakerOrganizationJsonLdProps) {
+  const description = `AVメーカー「${name}」の作品${workCount}件をまとめたページ。代表作・人気作・セール情報をAV-ADB編集部が整理しています。`;
+
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name,
+    url: pageUrl,
+    description,
+    additionalType: "https://schema.org/CreativeWork",
+    knowsAbout: ["アダルト動画"],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}

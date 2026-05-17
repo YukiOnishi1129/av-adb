@@ -6,6 +6,8 @@ import { Header } from "@/components/header";
 import { WorkCard } from "@/components/work-card";
 import { ShowMoreGrid } from "@/components/show-more-grid";
 import { BreadcrumbJsonLd } from "@/components/json-ld";
+import { LastUpdated } from "@/components/last-updated";
+import { EditorialCredit } from "@/components/editorial-credit";
 import { getGenres, getWorksByGenre } from "@/lib/data-loader";
 
 interface Props {
@@ -35,7 +37,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const saleCount = works.filter((w) => w.listPrice > 0 && w.price < w.listPrice).length;
   const highRatedCount = works.filter((w) => w.rating >= 4.0).length;
 
-  const title = `${name}のAV動画おすすめ${works.length}選 レビュー・感想・セール情報`;
+  const year = new Date().getFullYear();
+  const saleBadge = saleCount > 0 ? `【${saleCount}本セール中】` : "";
+  const title = `${saleBadge}【${year}年最新】${name}のAV動画おすすめ${works.length}選｜ジャンル別レビュー | AV-ADB`;
   const actressText = topActresses.length > 0 ? `人気女優は${topActresses.join("・")}など。` : "";
   const saleText = saleCount > 0 ? `セール中${saleCount}本。` : "";
   const ratingText = highRatedCount > 0 ? `評価4.0以上の高評価作品${highRatedCount}本掲載。` : "";
@@ -94,18 +98,21 @@ export default async function GenreDetailPage({ params }: Props) {
       <Header />
 
       <main className="mx-auto max-w-5xl px-4 py-6 pb-24 lg:pb-6">
-        {/* パンくず */}
-        <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground">
-          <Link href="/" className="hover:text-foreground">
-            トップ
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          <Link href="/genres" className="hover:text-foreground">
-            ジャンル
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground">{name}</span>
-        </nav>
+        {/* パンくず + 最終更新日 */}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">
+              トップ
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <Link href="/genres" className="hover:text-foreground">
+              ジャンル
+            </Link>
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-foreground">{name}</span>
+          </nav>
+          <LastUpdated variant="card" />
+        </div>
 
         {/* ヘッダー */}
         <div className="mb-6 flex items-center gap-3">
@@ -162,6 +169,8 @@ export default async function GenreDetailPage({ params }: Props) {
             このジャンルの作品はまだ登録されていません。
           </p>
         )}
+
+        <EditorialCredit />
       </main>
 
       <Footer />
