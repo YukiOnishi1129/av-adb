@@ -3,10 +3,17 @@ name: Retry Deploy on Failure
 # メインデプロイ（18:30 JST）が失敗していたら、翌朝に再実行する
 # JST 07:30 = UTC 22:30
 # actressバッチ(8:00 JST)の30分前に完了する配置
+#
+# ★2026-07-14: cron を停止★
+# 理由: av-adb のバッチ（Cloud Scheduler）を停止したため、日次で更新されるデータがなくなった。
+#       更新がないのに毎日リビルド・デプロイしても意味がなく、コストの無駄になるため cron を無効化。
+#       サイト自体は公開したまま（既存ページは配信され続ける）。
+#       手動デプロイが必要な場合は workflow_dispatch から実行できる。
+# 再開: バッチを再開する場合は、下の schedule を復活させること。
 
 on:
-  schedule:
-    - cron: '30 22 * * *'
+  # schedule:
+  #   - cron: '30 22 * * *'
   workflow_dispatch:
 
 permissions:
