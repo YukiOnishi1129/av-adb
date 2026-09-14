@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FanzaLink } from "@/components/fanza-link";
+import { TrackedLink } from "@/components/tracked-link";
 import { getFanzaInitialDiscount } from "@/lib/fanza-promo";
 import { isGwCampaignWork, getGwCampaignAffiliateUrl, CAMPAIGN_END_ISO as GW_END } from "@/lib/gw-campaign";
 import { GwCampaignBadge } from "@/components/gw-campaign-badge";
@@ -427,12 +428,12 @@ export default async function WorkDetailPage({
                   <span className="text-muted-foreground">出演：</span>
                   {work.actresses.map((actress, i) => (
                     <span key={actress}>
-                      <Link
+                      <TrackedLink linkType="other" fromWorkId={work.id}
                         href={`/actresses/${encodeURIComponent(actress)}`}
                         className="text-primary hover:underline"
                       >
                         {actress}
-                      </Link>
+                      </TrackedLink>
                       {i < work.actresses.length - 1 && "、"}
                     </span>
                   ))}
@@ -450,13 +451,13 @@ export default async function WorkDetailPage({
             {work.aiTags.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {work.aiTags.map((tag) => (
-                  <Link
+                  <TrackedLink linkType="other" fromWorkId={work.id}
                     key={tag}
                     href={`/genres/${encodeURIComponent(tag)}`}
                     className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-800/50"
                   >
                     {tag}
-                  </Link>
+                  </TrackedLink>
                 ))}
               </div>
             )}
@@ -585,14 +586,14 @@ export default async function WorkDetailPage({
             {work.genres.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-2">
                 {work.genres.map((genre) => (
-                  <Link
+                  <TrackedLink linkType="other" fromWorkId={work.id}
                     key={genre}
                     href={`/genres/${encodeURIComponent(genre)}`}
                     className="flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-sm hover:bg-secondary/80"
                   >
                     <Tag className="h-3 w-3" />
                     {genre}
-                  </Link>
+                  </TrackedLink>
                 ))}
               </div>
             )}
